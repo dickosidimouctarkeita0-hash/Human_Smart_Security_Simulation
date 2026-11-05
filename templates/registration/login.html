@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block contenu %}
+<h2>Connexion</h2>
+<p>Utilisez le compte créé dans le terminal. Les comptes de cet atelier partagent le même inventaire.</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button>Se connecter</button>
+</form>
+{% endblock %}

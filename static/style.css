@@ -1,0 +1,63 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f3f6fa; color: #18283b; font: 17px/1.6 Arial, sans-serif; }
+header { background: #16453f; color: white; padding: 1.5rem; }
+header a { color: #fff; }
+nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+main { max-width: 1080px; margin: 1.5rem auto; padding: 1.5rem; background: white; }
+a { color: #0657a3; }
+input, select, textarea { display: block; width: 100%; max-width: 600px; padding: .6rem; font: inherit; }
+input[type=checkbox] { width: auto; }
+button { background: #075c64; color: white; padding: .6rem 1rem; border: 0; border-radius: 5px; font: inherit; cursor: pointer; margin: .3rem 0; }
+button:focus, a:focus, input:focus, select:focus { outline: 3px solid #bb7200; outline-offset: 2px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #ccd7e2; padding: .65rem; text-align: left; }
+th { background: #e5edf5; }
+.tableau { overflow-x: auto; }
+.message { padding: .8rem; border-left: 5px solid #075c64; background: #e6f3f1; }
+.alerte, .errorlist { color: #a51624; font-weight: bold; }
+.bilan { font-size: 1.25rem; }
+
+
+.ms-commandes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ms-commandes form {
+    margin: 0;
+}
+
+.ms-bouton-on,
+.ms-bouton-off {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 18px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.ms-bouton-on {
+    background: #059669;
+}
+
+.ms-bouton-on:hover {
+    background: #047857;
+}
+
+.ms-bouton-off {
+    background: #dc2626;
+}
+
+.ms-bouton-off:hover {
+    background: #b91c1c;
+}
+
+.ms-bouton-on:disabled,
+.ms-bouton-off:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+

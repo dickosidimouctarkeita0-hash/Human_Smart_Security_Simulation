@@ -1,0 +1,114 @@
+
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<style>
+  .formulaire-minesafe {
+    max-width: 750px;
+    padding: 30px;
+    background: #1c293b;
+    border: 1px solid #34465c;
+    border-radius: 14px;
+    color: #f1f5f9;
+  }
+
+  .formulaire-minesafe h2 {
+    color: #ffffff;
+    margin-bottom: 25px;
+  }
+
+  .formulaire-minesafe label {
+    display: block;
+    color: #e2e8f0;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .formulaire-minesafe input:not([type="checkbox"]),
+  .formulaire-minesafe select,
+  .formulaire-minesafe textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    background: #101b2b;
+    color: #ffffff;
+    border: 1px solid #475569;
+    border-radius: 8px;
+  }
+
+  .formulaire-minesafe input:focus,
+  .formulaire-minesafe select:focus,
+  .formulaire-minesafe textarea:focus {
+    outline: 2px solid #2dd4bf;
+    outline-offset: 1px;
+  }
+
+  .formulaire-minesafe input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #14b8a6;
+  }
+
+  .formulaire-minesafe textarea {
+    min-height: 110px;
+  }
+
+  .formulaire-minesafe form p {
+    margin-bottom: 20px;
+  }
+
+  .formulaire-minesafe .helptext {
+    display: block;
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-top: 5px;
+  }
+
+  .formulaire-minesafe .errorlist {
+    color: #fca5a5;
+    margin-bottom: 10px;
+  }
+
+  .formulaire-minesafe button {
+    background: #0d9488;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .formulaire-minesafe button:hover {
+    background: #0f766e;
+  }
+
+  .formulaire-minesafe .retour {
+    display: inline-block;
+    margin-top: 20px;
+    color: #5eead4;
+  }
+</style>
+
+<div class="formulaire-minesafe">
+
+  <h2>📝 {{ titre }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+      Enregistrer
+    </button>
+  </form>
+
+  <a href="{{ retour }}" class="retour">
+    ← Annuler et revenir à la liste
+  </a>
+
+</div>
+
+{% endblock %}

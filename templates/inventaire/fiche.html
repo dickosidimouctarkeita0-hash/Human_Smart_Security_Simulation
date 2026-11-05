@@ -1,0 +1,303 @@
+
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<style>
+  .fiche-minesafe {
+    max-width: 950px;
+    padding: 30px;
+    background: #1c293b;
+    border: 1px solid #34465c;
+    border-radius: 14px;
+    color: #f1f5f9;
+  }
+
+  .fiche-minesafe h2 {
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  .fiche-minesafe h3 {
+    color: #5eead4;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  .fiche-minesafe p {
+    color: #e2e8f0;
+    line-height: 1.8;
+  }
+
+  .fiche-minesafe a {
+    color: #5eead4;
+    text-decoration: none;
+  }
+
+  .fiche-minesafe a:hover {
+    text-decoration: underline;
+  }
+
+  .fiche-minesafe ul {
+    padding-left: 25px;
+  }
+
+  .fiche-minesafe li {
+    padding: 8px 0;
+    color: #e2e8f0;
+  }
+
+  .fiche-info {
+    background: #101b2b;
+    border: 1px solid #34465c;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .fiche-etat {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+
+  .fiche-actif {
+    background: #166534;
+    color: #ffffff;
+  }
+
+  .fiche-inactif {
+    background: #475569;
+    color: #ffffff;
+  }
+
+  .fiche-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .fiche-actions a {
+    display: inline-block;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: #0d9488;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .fiche-actions a:hover {
+    background: #0f766e;
+    text-decoration: none;
+  }
+
+  .fiche-actions .supprimer {
+    background: #b91c1c;
+  }
+
+  .fiche-actions .supprimer:hover {
+    background: #991b1b;
+  }
+
+  .fiche-actions .retour {
+    background: #475569;
+  }
+
+  .fiche-commande {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .fiche-commande button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .fiche-commande .marche {
+    background: #15803d;
+  }
+
+  .fiche-commande .arret {
+    background: #b91c1c;
+  }
+</style>
+
+<div class="fiche-minesafe">
+
+  <h2>🪖 {{ element.nom }}</h2>
+
+  <p>Identifiant : #{{ element.pk }}</p>
+
+  {% if type_element == 'objets' %}
+
+    <div class="fiche-info">
+      <h3>Informations du casque</h3>
+
+      <p>
+        <strong>Emplacement :</strong>
+        {{ element.emplacement }}
+      </p>
+
+      <p>
+        <strong>Description :</strong>
+        {{ element.description|linebreaksbr }}
+      </p>
+
+      <p>
+        <strong>État :</strong>
+
+        {% if element.actif %}
+          <span class="fiche-etat fiche-actif">
+            Actif
+          </span>
+        {% else %}
+          <span class="fiche-etat fiche-inactif">
+            Inactif
+          </span>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="fiche-info">
+      <h3>🌡️ Capteurs associés</h3>
+
+      <ul>
+        {% for capteur in element.capteurs.all %}
+          <li>
+            <a href="{% url 'fiche' 'capteurs' capteur.pk %}">
+              {{ capteur }}
+            </a>
+          </li>
+        {% empty %}
+          <li>Aucun capteur associé.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="fiche-info">
+      <h3>⚙️ Actionneurs associés</h3>
+
+      <ul>
+        {% for actionneur in element.actionneurs.all %}
+          <li>
+            <a href="{% url 'fiche' 'actionneurs' actionneur.pk %}">
+              {{ actionneur }}
+            </a>
+          </li>
+        {% empty %}
+          <li>Aucun actionneur associé.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  {% elif type_element == 'capteurs' %}
+
+    <div class="fiche-info">
+      <h3>Informations du capteur</h3>
+
+      <p><strong>Objet :</strong> {{ element.objet }}</p>
+
+      <p>
+        <strong>Type :</strong>
+        {{ element.get_type_mesure_display }}
+      </p>
+
+      <p><strong>Unité :</strong> {{ element.unite }}</p>
+
+      <p>
+        <strong>Seuil d'alerte :</strong>
+        {{ element.seuil_alerte }}
+      </p>
+
+      <a href="{% url 'mesures' %}?capteur={{ element.pk }}">
+        Consulter les mesures de ce capteur
+      </a>
+    </div>
+
+  {% else %}
+
+    <div class="fiche-info">
+      <h3>Informations de l'actionneur</h3>
+
+      <p><strong>Objet :</strong> {{ element.objet }}</p>
+
+      <p>
+        <strong>Type :</strong>
+        {{ element.get_type_action_display }}
+      </p>
+
+      <p>
+        <strong>État simulé :</strong>
+
+        {% if element.etat %}
+          <span class="fiche-etat fiche-actif">
+            Allumé (ON)
+          </span>
+        {% else %}
+          <span class="fiche-etat fiche-inactif">
+            Éteint (OFF)
+          </span>
+        {% endif %}
+      </p>
+
+      <h3>Commander l'actionneur</h3>
+
+      <form method="post"
+            action="{% url 'commande' element.pk %}"
+            class="fiche-commande">
+
+        {% csrf_token %}
+
+        <button type="submit"
+                name="etat"
+                value="on"
+                class="marche">
+          Marche (ON)
+        </button>
+
+        <button type="submit"
+                name="etat"
+                value="off"
+                class="arret">
+          Arrêt (OFF)
+        </button>
+
+      </form>
+
+      <p>
+        Les commandes sont simulées et enregistrées
+        dans le journal Django.
+        Aucun matériel réel n'est commandé.
+      </p>
+    </div>
+
+  {% endif %}
+
+  <div class="fiche-actions">
+
+    <a href="{% url 'modifier' type_element element.pk %}">
+      Modifier
+    </a>
+
+    <a href="{% url 'supprimer' type_element element.pk %}"
+       class="supprimer">
+      Supprimer
+    </a>
+
+    <a href="{% url 'liste' type_element %}"
+       class="retour">
+      Retour à la liste
+    </a>
+
+  </div>
+
+</div>
+
+{% endblock %}

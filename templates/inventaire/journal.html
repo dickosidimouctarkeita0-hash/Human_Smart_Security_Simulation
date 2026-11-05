@@ -1,0 +1,150 @@
+
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<div class="journal-commandes">
+
+    <h2>📋 Journal des commandes simulées</h2>
+
+    <p class="journal-description">
+        Historique des commandes ON/OFF envoyées
+        aux actionneurs des casques MineSafe.
+    </p>
+
+    <div class="tableau">
+        <table class="journal-table">
+            <thead>
+                <tr>
+                    <th>Actionneur</th>
+                    <th>État demandé</th>
+                    <th>Utilisateur</th>
+                    <th>Date locale</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for commande in page %}
+                <tr>
+                    <td>{{ commande.actionneur }}</td>
+
+                    <td>
+                        {% if commande.etat_demande %}
+                            <span class="journal-on">● Marche (ON)</span>
+                        {% else %}
+                            <span class="journal-off">● Arrêt (OFF)</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ commande.utilisateur.username }}</td>
+
+                    <td>{{ commande.date|date:'d/m/Y H:i:s' }}</td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        Aucune commande enregistrée.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="journal-pagination">
+        <span>
+            Page {{ page.number }} sur {{ page.paginator.num_pages }}
+        </span>
+
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}">
+                ← Précédente
+            </a>
+        {% endif %}
+
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}">
+                Suivante →
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+    .journal-commandes {
+        background: #172235;
+        padding: 25px;
+        border-radius: 14px;
+        color: #f8fafc;
+    }
+
+    .journal-commandes h2 {
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .journal-description {
+        color: #cbd5e1;
+        margin-bottom: 25px;
+    }
+
+    .journal-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+    }
+
+    .journal-table th {
+        background: #263b53;
+        color: #ffffff !important;
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #475569;
+    }
+
+    .journal-table td {
+        padding: 15px;
+        color: #f8fafc !important;
+        background: #1e293b;
+        border: 1px solid #475569;
+    }
+
+    .journal-table tbody tr:nth-child(even) td {
+        background: #243449;
+    }
+
+    .journal-on {
+        display: inline-block;
+        background: #166534;
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .journal-off {
+        display: inline-block;
+        background: #475569;
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .journal-pagination {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        color: #e2e8f0;
+    }
+
+    .journal-pagination a {
+        color: #67e8f9;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,524 @@
+
+{% extends 'base.html' %}
+{% block contenu %}
+
+<style>
+  .minesafe {
+    --fond: #071629;
+    --carte: #10243d;
+    --bordure: #294462;
+    --texte: #f1f5f9;
+    --secondaire: #a8bdd1;
+    color: var(--texte);
+    background: var(--fond);
+    padding: 25px;
+    border-radius: 14px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  .minesafe * { box-sizing: border-box; }
+
+  .ms-entete {
+    padding: 24px;
+    background: linear-gradient(120deg, #123c68, #08192e);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    margin-bottom: 22px;
+  }
+
+  .ms-entete h1 {
+    color: white;
+    font-size: 30px;
+    margin: 0 0 8px;
+  }
+
+  .ms-entete p {
+    color: #c5d7e8;
+    margin: 0;
+  }
+
+  .ms-indicateurs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 22px;
+  }
+
+  .ms-indicateur {
+    padding: 22px;
+    border-radius: 12px;
+    background: var(--carte);
+    border: 1px solid #2364a1;
+  }
+
+  .ms-indicateur:nth-child(2) { border-color: #10b981; }
+  .ms-indicateur:nth-child(3) { border-color: #a855f7; }
+
+  .ms-indicateur .nombre {
+    font-size: 34px;
+    font-weight: 800;
+    color: white;
+  }
+
+  .ms-indicateur .description {
+    color: var(--secondaire);
+    margin-top: 5px;
+  }
+
+  .ms-section {
+    background: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 22px;
+  }
+
+  .ms-section h2 {
+    color: white;
+    font-size: 20px;
+    margin: 0 0 18px;
+  }
+
+  .ms-casques {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .ms-casque {
+    border: 1px solid #3974aa;
+    background: #0b1c32;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .ms-casque h3 {
+    color: white;
+    margin: 0 0 12px;
+  }
+
+  .ms-casque p {
+    color: var(--secondaire);
+    margin: 8px 0;
+  }
+
+  .ms-etat {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .ms-vert { background: #065f46; color: #d1fae5; }
+  .ms-rouge { background: #991b1b; color: #fee2e2; }
+  .ms-jaune { background: #854d0e; color: #fef3c7; }
+  .ms-gris { background: #334155; color: #e2e8f0; }
+
+  .ms-tableau {
+    overflow-x: auto;
+  }
+
+  .minesafe table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--texte);
+    background: transparent;
+    font-size: 14px;
+  }
+
+  .minesafe th {
+    background: #193655;
+    color: white;
+    text-align: left;
+    padding: 13px;
+    border-bottom: 1px solid var(--bordure);
+  }
+
+  .minesafe td {
+    padding: 13px;
+    border-bottom: 1px solid #29415b;
+    color: #dbeafe;
+  }
+
+  .minesafe tbody tr:hover {
+    background: #19314d;
+  }
+
+  .minesafe a {
+    color: #7dd3fc;
+  }
+
+  .ms-alerte {
+    padding: 16px 18px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+
+  .ms-alerte strong {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .ms-alerte p {
+    margin: 0;
+  }
+
+  .ms-sos {
+    background: #7f1d1d;
+    border: 1px solid #ef4444;
+    color: white;
+  }
+
+  .ms-choc {
+    background: #45300d;
+    border: 1px solid #f59e0b;
+    color: #fef3c7;
+  }
+
+  .ms-note {
+    color: var(--secondaire);
+    font-size: 13px;
+    margin-top: 15px;
+  }
+
+  @media (max-width: 700px) {
+    .minesafe { padding: 12px; }
+    .ms-indicateurs { grid-template-columns: 1fr; }
+    .ms-casques { grid-template-columns: 1fr; }
+    .ms-entete h1 { font-size: 23px; }
+  }
+</style>
+
+<div class="minesafe">
+
+  <!-- EN-TÊTE -->
+  <header class="ms-entete">
+    <h1>⛑️ MineSafe — Casque connecté</h1>
+    <p>Surveillance des casques IoT en milieu minier</p>
+    <p>Tableau de bord de simulation et de sécurité</p>
+  </header>
+
+  <!-- INDICATEURS -->
+  <div class="ms-indicateurs">
+    <div class="ms-indicateur">
+      <div class="nombre">{{ nb_objets }}</div>
+      <div class="description">⛑️ Casques enregistrés</div>
+    </div>
+
+    <div class="ms-indicateur">
+      <div class="nombre">{{ nb_capteurs }}</div>
+      <div class="description">📡 Capteurs enregistrés</div>
+    </div>
+
+    <div class="ms-indicateur">
+      <div class="nombre">{{ nb_actionneurs }}</div>
+      <div class="description">⚙️ Actionneurs enregistrés</div>
+    </div>
+  </div>
+
+  <!-- ÉTAT DES CASQUES -->
+  <section class="ms-section">
+    <h2>⛑️ État des casques</h2>
+
+    <div class="ms-casques">
+      {% for casque in casques %}
+      <div class="ms-casque">
+        <h3>{{ casque.objet.nom }}</h3>
+
+        {% if not casque.objet.actif %}
+          <span class="ms-etat ms-gris">Désactivé</span>
+        {% elif casque.etat %}
+          <span class="ms-etat ms-vert">Données disponibles</span>
+        {% else %}
+          <span class="ms-etat ms-jaune">En attente de données</span>
+        {% endif %}
+
+        {% if casque.etat %}
+          <p>Dernière mesure :
+            {{ casque.etat.date|date:'d/m/Y H:i:s' }}
+          </p>
+
+          <p>
+            SOS :
+            {% if casque.etat.sos %}
+              <span class="ms-etat ms-rouge">ACTIVÉ</span>
+            {% else %}
+              <span class="ms-etat ms-vert">Inactif</span>
+            {% endif %}
+          </p>
+
+          <p>
+            Choc :
+            {% if casque.etat.choc %}
+              <span class="ms-etat ms-jaune">Détecté</span>
+            {% else %}
+              <span class="ms-etat ms-vert">Normal</span>
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p>Aucun casque enregistré.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ALERTES -->
+  <section class="ms-section">
+    <h2>🚨 Alertes de sécurité</h2>
+
+    {% for casque in casques %}
+      {% if casque.etat %}
+        {% if casque.etat.sos %}
+          <div class="ms-alerte ms-sos">
+            <strong>🚨 URGENCE SOS — {{ casque.objet.nom }}</strong>
+            <p>Le bouton SOS a été activé (simulation).</p>
+          </div>
+        {% endif %}
+
+        {% if casque.etat.choc %}
+          <div class="ms-alerte ms-choc">
+            <strong>⚠️ CHOC DÉTECTÉ — {{ casque.objet.nom }}</strong>
+            <p>Un choc a été signalé par le simulateur.</p>
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    <p class="ms-note">
+      Les alertes affichées correspondent aux derniers états
+      enregistrés par le simulateur.
+    </p>
+  </section>
+
+  <!-- MESURES DES CAPTEURS -->
+  <section class="ms-section">
+    <h2>📊 Mesures des capteurs</h2>
+
+    <div class="ms-tableau">
+      <table>
+        <thead>
+          <tr>
+            <th>Casque</th>
+            <th>Capteur</th>
+            <th>Dernière valeur</th>
+            <th>Date locale</th>
+            <th>État</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for ligne in lignes %}
+          <tr>
+            <td>
+              {{ ligne.capteur.objet }}
+              {% if not ligne.capteur.objet.actif %}
+                (désactivé)
+              {% endif %}
+            </td>
+
+            <td>
+              <a href="{% url 'fiche' 'capteurs' ligne.capteur.pk %}">
+                {{ ligne.capteur.nom }}
+              </a>
+            </td>
+
+            <td>
+              {% if ligne.mesure %}
+                {{ ligne.mesure.valeur }} {{ ligne.capteur.unite }}
+              {% else %}
+                Aucune mesure
+              {% endif %}
+            </td>
+
+            <td>
+              {% if ligne.mesure %}
+                {{ ligne.mesure.date|date:'d/m/Y H:i:s' }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+            <td>
+              {% if not ligne.mesure %}
+                <span class="ms-etat ms-gris">En attente</span>
+              {% elif ligne.alerte %}
+                <span class="ms-etat ms-rouge">ALERTE</span>
+              {% else %}
+                <span class="ms-etat ms-vert">Normal</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">Aucun capteur enregistré.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  
+<!-- COMMANDES DES ACTIONNEURS -->
+<section class="ms-section" id="commandes-actionneurs">
+    <h2>⚡ Commandes des actionneurs</h2>
+
+    <div class="ms-tableau">
+        <table>
+            <thead>
+                <tr>
+                    <th>Casque</th>
+                    <th>Actionneur</th>
+                    <th>État actuel</th>
+                    <th>Commande</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for actionneur in actionneurs %}
+                <tr>
+                    <td>{{ actionneur.objet.nom }}</td>
+
+                    <td>{{ actionneur.nom }}</td>
+
+                    <td>
+                        {% if actionneur.etat %}
+                            <span class="ms-etat ms-vert">
+                                🟢 Allumé
+                            </span>
+                        {% else %}
+                            <span class="ms-etat ms-gris">
+                                ⚫ Éteint
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="ms-commandes">
+                            <form method="post"
+                                  action="{% url 'commande' actionneur.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="origine" value="tableau">
+                                <input type="hidden" name="etat" value="on">
+
+                                <button type="submit" class="ms-bouton-on"
+                                     {% if actionneur.etat %}disabled{% endif %}>
+                                    ON
+                                </button>
+                            </form>
+
+                            <form method="post"
+                                  action="{% url 'commande' actionneur.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="origine" value="tableau">
+                                <input type="hidden" name="etat" value="off">
+
+                             <button type="submit" class="ms-bouton-off"
+                                  {% if not actionneur.etat %}disabled{% endif %}>
+                                OFF
+                             </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        Aucun actionneur enregistré.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="ms-note">
+        Les commandes sont simulées et enregistrées dans
+        l'historique Django. Aucun matériel réel n'est commandé.
+    </p>
+</section>
+
+
+  <!-- GPS ET ACCÉLÉROMÈTRE -->
+  <section class="ms-section">
+    <h2>📍 GPS, accéléromètre et sécurité</h2>
+
+    <div class="ms-tableau">
+      <table>
+        <thead>
+          <tr>
+            <th>Casque</th>
+            <th>GPS (latitude, longitude)</th>
+            <th>Accélération X / Y / Z (g)</th>
+            <th>SOS</th>
+            <th>Choc</th>
+            <th>Dernière mise à jour</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for casque in casques %}
+          <tr>
+            <td>{{ casque.objet.nom }}</td>
+
+            {% if casque.etat %}
+              <td>
+                {{ casque.etat.latitude }} ;
+                {{ casque.etat.longitude }}
+              </td>
+
+              <td>
+                {{ casque.etat.accel_x|floatformat:2 }} /
+                {{ casque.etat.accel_y|floatformat:2 }} /
+                {{ casque.etat.accel_z|floatformat:2 }}
+              </td>
+
+              <td>
+                {% if casque.etat.sos %}
+                  <span class="ms-etat ms-rouge">SOS ACTIVÉ</span>
+                {% else %}
+                  <span class="ms-etat ms-gris">Inactif</span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if casque.etat.choc %}
+                  <span class="ms-etat ms-jaune">Détecté</span>
+                {% else %}
+                  <span class="ms-etat ms-vert">Normal</span>
+                {% endif %}
+              </td>
+
+              <td>{{ casque.etat.date|date:'d/m/Y H:i:s' }}</td>
+            {% else %}
+              <td colspan="5">En attente de simulation</td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">Aucun casque disponible.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="ms-note">
+    MineSafe — Projet pédagogique IoT.
+    Données simulées, sans liaison directe avec des équipements miniers réels.
+  </p>
+
+</div>
+
+<script>
+  // Actualisation automatique toutes les 2 secondes.
+  setInterval(function () {
+    window.location.reload();
+  }, 2000);
+</script>
+
+{% endblock %}

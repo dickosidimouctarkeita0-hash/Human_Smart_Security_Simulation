@@ -1,0 +1,27 @@
+﻿# Environnement virtuel
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Base de données
+db.sqlite3
+db.sqlite3-journal
+
+# Informations confidentielles
+.cle_locale
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+arduino_secrets.h
+
+# Fichiers locaux
+donnees_demo.json
+*.log
+
+# VS Code
+.vscode/

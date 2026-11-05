@@ -1,0 +1,281 @@
+
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MineSafe — Casque connecté</title>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <style>
+        /* Structure générale */
+        body {
+            margin: 0;
+            background: #071629;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .ms-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Barre latérale */
+        .ms-sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            background: #081b31;
+            color: white;
+            border-right: 1px solid #294462;
+            padding: 22px 15px;
+            box-sizing: border-box;
+        }
+
+        .ms-logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .ms-sous-titre {
+            color: #93c5fd;
+            font-size: 13px;
+            margin-bottom: 35px;
+        }
+
+        .ms-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ms-navigation a {
+            display: block;
+            color: #dbeafe;
+            text-decoration: none;
+            padding: 13px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .ms-navigation a:hover,
+        .ms-navigation a:focus-visible {
+            background: #164a7e;
+            color: white;
+        }
+
+        .ms-sidebar-bas {
+            margin-top: 40px;
+            border-top: 1px solid #294462;
+            padding-top: 20px;
+        }
+
+        .ms-utilisateur {
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .ms-deconnexion {
+            background: #b91c1c;
+            color: white;
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .ms-deconnexion:hover {
+            background: #991b1b;
+        }
+
+        /* Zone principale */
+        .ms-contenu {
+            flex: 1;
+            min-width: 0;
+            background: #071629;
+        }
+
+        .ms-topbar {
+            background: #10243d;
+            border-bottom: 1px solid #294462;
+            padding: 20px 28px;
+            color: white;
+        }
+
+        .ms-topbar h1 {
+            color: white;
+            font-size: 24px;
+            margin: 0 0 6px;
+        }
+
+        .ms-topbar p {
+            color: #a8bdd1;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .ms-main {
+            max-width: none;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            width: 100%;
+            background: #071629;
+            min-height: calc(100vh - 85px);
+        }
+
+        .ms-main > .minesafe {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+        .ms-message {
+            background: #164e63;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Écrans plus petits */
+        @media (max-width: 850px) {
+            .ms-layout {
+                flex-direction: column;
+            }
+
+            .ms-sidebar {
+                width: 100%;
+            }
+
+            .ms-navigation {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .ms-navigation a {
+                padding: 9px 12px;
+            }
+
+            .ms-sidebar-bas {
+                margin-top: 15px;
+            }
+
+            .ms-topbar {
+                padding: 18px;
+            }
+
+            .ms-main {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="ms-layout">
+
+    <!-- BARRE LATÉRALE -->
+    {% if user.is_authenticated %}
+    <aside class="ms-sidebar">
+
+        <div class="ms-logo">
+            ⛑️ MineSafe
+        </div>
+
+        <div class="ms-sous-titre">
+            Casque connecté IoT
+        </div>
+
+        <nav class="ms-navigation" aria-label="Navigation principale">
+
+            <a href="{% url 'tableau' %}">
+                🏠 Tableau de bord
+            </a>
+
+            <a href="{% url 'liste' 'objets' %}">
+                ⛑️ Casques / Objets
+            </a>
+
+            <a href="{% url 'liste' 'capteurs' %}">
+                📡 Capteurs
+            </a>
+
+            <a href="{% url 'liste' 'actionneurs' %}">
+                ⚙️ Actionneurs
+            </a>
+
+            <a href="{% url 'mesures' %}">
+                📊 Mesures
+            </a>
+
+            <a href="{% url 'journal' %}">
+                📋 Commandes
+            </a>
+
+        </nav>
+
+        <div class="ms-sidebar-bas">
+
+            <div class="ms-utilisateur">
+                👤 Connecté : {{ user.username }}
+            </div>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+
+                <button type="submit" class="ms-deconnexion">
+                    Se déconnecter
+                </button>
+            </form>
+
+            <p style="font-size:12px;color:#94a3b8;margin-top:25px;">
+                MineSafe — Simulation IoT
+            </p>
+
+        </div>
+
+    </aside>
+    {% endif %}
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="ms-contenu">
+
+        <div class="ms-topbar">
+
+            <h1>MineSafe — Surveillance minière</h1>
+
+            <p>
+                Système de surveillance des casques connectés
+                — Données simulées
+            </p>
+
+        </div>
+
+        <main class="ms-main">
+
+            {% for message in messages %}
+                <p role="status" class="ms-message">
+                    {{ message }}
+                </p>
+            {% endfor %}
+
+            {% block contenu %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</div>
+
+</body>
+</html>
